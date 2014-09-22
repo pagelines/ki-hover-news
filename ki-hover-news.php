@@ -11,33 +11,26 @@
  * Filter: component, format, dual-width
  * Loading: active
  */
-if (!class_exists('KIHoverNews'))
+if (!class_exists('PageLinesSection'))
     return;
 
 include( plugin_dir_path(__FILE__) . '/assets/BFI_Thumb.php');
-
 class KIHoverNews extends PageLinesSection {
-
    function __construct($settings = array()) {
         parent::__construct($settings);
         // add_action('init', array(&$this, 'init'));
     }
-
     // function init() {
     //     load_plugin_textdomain('hover_news', false, dirname(plugin_basename(__FILE__)) . '/languages');
     // }
-
     function section_scripts() {
         wp_enqueue_style('bootstrap-grid', $this->base_url . '/assets/bootstrap/grid.css', array(), NULL);
-
         // wp_enqueue_script( 'isotope', PL_JS . '/utils.isotope.min.js', array('jquery'), pl_get_cache_key(), true);
         wp_deregister_script('masonry');
         wp_register_script('masonry', $this->base_url . '/assets/masonry.pkgd.min.js', array('jquery'), '3.1.5', 1);
         wp_enqueue_script('masonry');
-        
         // wp_enqueue_script( 'masonry', $this->base_url . '/assets/masonry.pkgd.min.js', array('jquery'), '3.1.5', 1);
         wp_enqueue_script('infinitescroll', $this->base_url . '/assets/script.infinitescroll.js', array( 'jquery'), PL_CORE_VERSION, true);
-        
         wp_enqueue_style('hover-news', $this->base_url . '/css/hover-news.css', array(), NULL);
         wp_enqueue_script('hover-news', $this->base_url . '/js/hover-news.js', array('jquery'), NULL, true);
     }
@@ -48,9 +41,7 @@ class KIHoverNews extends PageLinesSection {
         $text_color = pl_hashify($this->opt('text_color', array('default' => '#ffffff')));
         $background_color = $this->hex2rgb($this->opt('background_color', array('default' => '#5bc0de')));
         $background_color_opacity = (int) $this->opt('background_color_opacity', array('default' => 10));
-        
         $rgba = 'rgba('.$background_color['r'].', '.$background_color['g'].', '.$background_color['b'].', '.($background_color_opacity / 10).')';        
-
         $button_color = pl_hashify($this->opt('button_color', array('default' => '#ffffff')));
         $button_background_color = pl_hashify($this->opt('button_background_color', array('default' => '#428bca')));
         $extra_color = pl_hashify($this->opt('extra_color', array('default' => '#ffffff')));
@@ -85,7 +76,6 @@ class KIHoverNews extends PageLinesSection {
     }
 
     function section_opts() {
-
         $opts = array(
             array(
                 'title' => __('Styling', 'hover_news'),
@@ -347,28 +337,20 @@ class KIHoverNews extends PageLinesSection {
         $format = $this->opt('hover_news_format', array('default' => 'grid'));     
         $col = (int) $this->opt('col', array('default' => 4));
         $button_text = $this->opt('button_text', array('default' => __('Read more', 'news_views')));
-
-        
         $category = ($this->opt('category' )) ? $this->opt('category') : null;
         $number_of_articles = (int) $this->opt('number_of_articles', array('default' => 20));
         $orderby = $this->opt('orderby', array('default' => 'date'));     
-
         $character_limit_of_excerpt = (int) $this->opt('character_limit_of_excerpt', array('default' => 100));
         $is_hide_author = $this->opt('is_hide_author', array('default' => false));
         $is_hide_categories = $this->opt('is_hide_categories', array('default' => false));
         $is_hide_date = $this->opt('is_hide_date', array('default' => false));
         $loading = $this->opt('post_loading', array('default' => 'ajax'));
-
         $category_position = $this->opt('category_position', array('default' => 'below'));
         $category_display = $this->opt('category_display', array('default' => 'text'));
-
         $size_of_thumbnail = $this->opt('hover_news_thumbsize', array('default' => 'full'));
-
         $page = (isset($_GET['hovernews_page']) && $_GET['hovernews_page'] != 1) ? $_GET['hovernews_page'] : 1;
-
         $posts = $this->load_posts($page, $category, $orderby, $number_of_articles);
         $next_posts = $this->load_posts( $page + 1, $category, $orderby, $number_of_articles);
-
         $boxes = sprintf('<ul id="hovernews-%s" class="hovernews-container row clearfix" data-format="%s" data-loading="%s" data-url="%s" data-id="%s" data-col="%s">', $this->get_the_id(), $format, $loading, $this->base_url, $this->get_the_id(), $col);
 
         if ($posts->have_posts()):
@@ -379,7 +361,6 @@ class KIHoverNews extends PageLinesSection {
                 $post_title = get_the_title();
                 $excerpt = get_the_content();
                 $categories = get_the_category($post_id);
-                
                 if ($format == 'grid') {
                     $boxes .= sprintf('<li class="col-md-%s grid-format hovernews-item">', $col);
                 } else {
@@ -462,8 +443,6 @@ class KIHoverNews extends PageLinesSection {
 
         $u = add_query_arg('hovernews_page', $page + 1, pl_current_url());
         $fetchlink = sprintf('<a href="%s" class="">%s</a>', $u, __('Load More Posts', 'hover_news'));        
-
-        
         if( !empty($next_posts->posts) ){
 
             $class = ( $this->opt('post_loading', $this->oset) == 'infinite' ) ? 'iscroll' : 'fetchpost';
@@ -489,13 +468,11 @@ class KIHoverNews extends PageLinesSection {
         $excerpt = substr($excerpt, 0, $lenght);
         $excerpt = substr($excerpt, 0, strripos($excerpt, " "));
         $excerpt = trim(preg_replace('/\s+/', ' ', $excerpt));
-
         return $excerpt;
     }
 
     function get_image_sizes() {
         global $_wp_additional_image_sizes;
-
         $sizes = array(
                 'thumbnail' => array( 'name' => 'Thumbnail' ),
                 'medium'=> array( 'name' => 'Medium' ),
@@ -505,7 +482,6 @@ class KIHoverNews extends PageLinesSection {
         if ( is_array( $_wp_additional_image_sizes ) && ! empty( $_wp_additional_image_sizes ) )
             foreach ( $_wp_additional_image_sizes as $size => $data )
                 $sizes[] = array( 'name' => $size );
-
         return $sizes;
     }
 
@@ -527,35 +503,24 @@ class KIHoverNews extends PageLinesSection {
     }
 
     function load_posts( $page = 1, $category = null, $orderby = null, $number = null){
-        
         $query = array();
         $query['post_type'] = 'post';
         $query['paged'] = $page;
-
         if( isset($category) && !empty($category) )
             $query['category_name'] = $category;
-            
         if( isset($orderby) && !empty($orderby) )
             $query['orderby'] = (string) $orderby;
-
         // Search page
         if( isset( $_GET['s'] ) && $_GET['s'] != '' )
             $query['s'] = $_GET['s'];
-        
         if( isset($number) )
             $query['posts_per_page'] = $number;
-        
-
         $q = new WP_Query($query);
-
-    
         return $q;
     }
 
     function pl_current_url(){
-
         $url = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-
         return substr($url,0,strpos($url, '?'));
     }
 
@@ -563,7 +528,6 @@ class KIHoverNews extends PageLinesSection {
         $categories = get_categories();
         $options = array('' => array('name' => '— SELECT —'));
         $options = array('0' => array('name' => '*Show All*'));
-
         foreach ($categories as $category) {
             $options[$category->term_id] = array('name' => $category->name);
         }
@@ -574,7 +538,6 @@ class KIHoverNews extends PageLinesSection {
         $categories = get_categories();
         $options = array('' => array('name' => '— SELECT —'));
         $options = array('0' => array('name' => '*Show All*'));
-
         foreach ($categories as $category) {
             $options[$category->slug] = array('name' => $category->name);
         }
